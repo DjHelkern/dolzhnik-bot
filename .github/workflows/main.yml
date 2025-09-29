@@ -34,4 +34,5 @@ jobs:
           push: true # Говорим, что образ нужно именно пушить в registry
           tags: | # Указываем теги для образа
             djhelkern/dolzhnik-bot:latest
+            djhelkern/dolzhnik-bot:${{ github.ref_name }}
             djhelkern/dolzhnik-bot:${{ github.sha }}

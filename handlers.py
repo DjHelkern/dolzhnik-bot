@@ -12,6 +12,9 @@ _Пример: `/show иванов`_
 
 /show - Показать общий список всех должников.
 
+/del `фамилия` `что вернул` - Удалить конкретный долг по названию.
+_Пример: `/del иванов дрель`_
+
 /help - Показать это сообщение.
 """
 
@@ -26,7 +29,8 @@ def register_handlers(bot: telebot.TeleBot):
     @bot.message_handler(commands=['add'])
     def add_handler(message):
         try:
-            _, name, item = message.text.split(maxsplit=2)
+            _, name, *item_parts = message.text.split()
+            item = " ".join(item_parts)
             db.add_debt(name, item)
             bot.reply_to(
                 message, f"✅ Записал: {name.capitalize()} взял(а) '{item}'.")
@@ -73,6 +77,26 @@ def register_handlers(bot: telebot.TeleBot):
 
             bot.send_message(message.chat.id, response_text,
                              parse_mode='Markdown')
+
+    @bot.message_handler(commands=['del'])
+    def delete_command(message):
+        try:
+            _, name, *item_parts = message.text.split()
+            item = " ".join(item_parts)
+
+            debts = db.get_debts_by_name(name)
+            for debt_id, debt_item in debts:
+                if debt_item.lower() == item.lower():
+                    db.delete_debt_by_id(debt_id)
+                    bot.reply_to(
+                        message, f"✅ Долг '{item}' у {name.capitalize()} удалён.")
+                    return
+
+            bot.reply_to(
+                message, f"❌ Не найден долг '{item}' у {name.capitalize()}.")
+        except ValueError:
+            bot.reply_to(
+                message, "❌ Неверный формат. Используйте: `/del фамилия что_вернул`")
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('del_'))
     def delete_callback(call):

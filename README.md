@@ -64,7 +64,7 @@ pip install -r requirements.txt
   DATABASE_NAME='debts.db'
 #Запуск приложения
 python3 main.py
-
+```
 ### 3. Запуск из Docker
 ```bash
 docker run -d --restart always \

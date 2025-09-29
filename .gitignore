@@ -1,0 +1,32 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+
+# === Virtualenv ===
+venv/
+ENV/
+.venv/
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === Env и секреты ===
+.env
+
+# === SQLite БД ===
+*.db
+
+# === Docker ===
+*.pid
+*.sock
+
+# === Разное ===
+*.log
+*.tmp

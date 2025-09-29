@@ -1,0 +1,37 @@
+# Название воркфлоу, которое будет отображаться в GitHub
+name: Publish Docker Image
+
+# Триггер: запускать воркфлоу при пуше в ветку 'main'
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*.*.*"] # запуск при пуше тега вида v1.0.0
+
+# Задачи, которые нужно выполнить
+jobs:
+  build-and-push:
+    # Запускаем на последней версии Ubuntu, предоставляемой GitHub
+    runs-on: ubuntu-latest
+
+    # Шаги выполнения задачи
+    steps:
+      # 1. Клонируем код из репозитория
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Логинимся в Docker Hub, используя секреты
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      # 3. Собираем и пушим Docker-образ
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Собирать из текущей директории (где лежит Dockerfile)
+          push: true # Говорим, что образ нужно именно пушить в registry
+          tags: | # Указываем теги для образа
+            djhelkern/dolzhnik-bot:latest
+            djhelkern/dolzhnik-bot:${{ github.sha }}
